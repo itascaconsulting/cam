@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: 'Create IAM User and permissions to run cruncher automatic mode'
+
+Resources:
+
+  DataBucket:
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: Delete
+    Properties:
+      WebsiteConfiguration:
+        IndexDocument: index.html
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      PolicyDocument:
+        Statement:
+          -
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub "arn:aws:s3:::${DataBucket}/public/*"
+          -
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub "arn:aws:s3:::${DataBucket}/index.html"
+
+      Bucket: !Ref DataBucket
+
+Outputs:
+
+  DataBucketName:
+    Value: !Ref 'DataBucket'
+    Description: Name of data bucket
+
+  WebsiteURL:
+    Value: !GetAtt [DataBucket, WebsiteURL]
+    Description: URL for website hosted on S3
+
+  S3BucketSecureURL:
+    Value: !Join ['', ['https://', !GetAtt [DataBucket, DomainName]]]
+    Description: Name of S3 bucket to hold website content

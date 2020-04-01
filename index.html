@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Cruncher Automatic Mode</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.344.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha384-fYxN7HsDOBRo1wT/NSZ0LkoNlcXvpDpFy6WzB42LxuKAX7sBwgo7vuins+E1HCaw" crossorigin="anonymous"></script>
+    <script src="public/script.js?ver=1.0"></script>
+  </head>
+  <body><h1>Cruncher Automatic Mode Network</h1>
+    <center> To join the network: Copy and paste the following line
+      into the <b>IPython</b> console of <em>FLAC3D</em> 7.0
+      (Menu Bar->Panes->IPython Console).
+    </center>
+    <div class="alert alert-secondary" role="alert" style="font-family: monospace">
+      import six; six.exec_(six.moves.urllib.request.urlopen('http://cam.itascacloud.com/cam.py').read())
+    </div>
+
+    <div><h2 id="inqueue"></h2></div>
+    <div><h2 id="finished"></h2></div>
+    <div id="running"><h2>Jobs Running or Stopped </h2></div>
+    <table id="running_table" class="table table-sm" style="font-size: small">
+      <thead>
+        <tr><th>Computer</th><th>Start Time</th><th>File</th><th>Case ID</th></tr>
+      </thead>
+    </table>
+    <div id="errors"><h2>Errors</h2></div>
+    <table id="error_table" class="table table-sm" style="font-size: small">
+      <thead>
+        <tr><th>Computer</th><th>Start Time</th><th>End
+        Time</th><th>Case ID</th><th>Error Message</th></tr>
+      </thead>
+    </table>
+  </body>
+  <script>start();</script>
+</html>

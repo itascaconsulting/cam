@@ -1,0 +1,151 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: 'Create IAM User and permissions to run cruncher automatic mode'
+
+Resources:
+
+  DataBucket:
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: Delete
+    Properties:
+      WebsiteConfiguration:
+        IndexDocument: index.html
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      PolicyDocument:
+        Statement:
+          -
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub "arn:aws:s3:::${DataBucket}/public/*"
+          -
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub "arn:aws:s3:::${DataBucket}/index.html"
+
+      Bucket: !Ref DataBucket
+
+  JobQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      FifoQueue: True
+      MessageRetentionPeriod: 1209600
+
+  ItascaCodeClientUser:
+    Type: AWS::IAM::User
+
+  ItascaCodeClientUserGroup:
+    Type: AWS::IAM::Group
+
+  ItascaCodeClientUserAdd:
+    Type: AWS::IAM::UserToGroupAddition
+    Properties:
+      GroupName: !Ref 'ItascaCodeClientUserGroup'
+      Users: [!Ref 'ItascaCodeClientUser']
+
+  ItascaCodeClientUserPolicies:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: ItascaCodeClientUsers
+      PolicyDocument:
+        Statement:
+        - Effect: Allow
+          Action: ['sqs:ReceiveMessage', 'sqs:DeleteMessage', 'sqs:GetQueueAttributes']
+          Resource: !GetAtt [JobQueue, Arn]
+        - Effect: Allow
+          Action: ['s3:PutObject']
+          Resource: !Sub "arn:aws:s3:::${DataBucket}/data/pending-*"
+        - Effect: Allow
+          Action: ['s3:PutObject']
+          Resource: !Sub "arn:aws:s3:::${DataBucket}/data/error-*"
+        - Effect: Allow
+          Action: ['s3:PutObject']
+          Resource: !Sub "arn:aws:s3:::${DataBucket}/data/done-*"
+        - Effect: Allow
+          Action: ['s3:GetObject']
+          Resource: !Sub "arn:aws:s3:::${DataBucket}/data/pfile-*"
+        - Effect: Allow
+          Action: ['s3:DeleteObject']
+          Resource: !Sub "arn:aws:s3:::${DataBucket}/data/pending-*"
+      Groups: [!Ref 'ItascaCodeClientUserGroup']
+
+  ItascaCodeClientKeys:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName: !Ref 'ItascaCodeClientUser'
+
+  WebAppUser:
+    Type: AWS::IAM::User
+
+  WebAppGroup:
+   Type: AWS::IAM::Group
+
+  WebAppUserADd:
+    Type: AWS::IAM::UserToGroupAddition
+    Properties:
+      GroupName: !Ref 'WebAppGroup'
+      Users: [!Ref 'WebAppUser']
+
+  WebAppUserPolicies:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: WebAppUsers
+      PolicyDocument:
+        Statement:
+        - Effect: Allow
+          Action: ['s3:ListBucket']
+          Resource: !Sub "arn:aws:s3:::${DataBucket}/data/"
+        - Effect: Allow
+          Action: ['s3:GetObject']
+          Resource: !Sub "arn:aws:s3:::${DataBucket}/data/pending-*"
+        - Effect: Allow
+          Action: ['s3:GetObject']
+          Resource: !Sub "arn:aws:s3:::${DataBucket}/data/error-*"
+        - Effect: Allow
+          Action: ['sqs:GetQueueAttributes']
+          Resource: !GetAtt [JobQueue, Arn]
+      Groups: [!Ref 'WebAppGroup']
+
+  WebAppKeys:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName: !Ref 'WebAppUser'
+
+
+Outputs:
+
+  AccessKey:
+    Value: !Ref 'ItascaCodeClientKeys'
+    Description: AWSAccessKeyId of new user
+
+  SecretKey:
+    Value: !GetAtt [ItascaCodeClientKeys, SecretAccessKey]
+    Description: AWSSecretAccessKey of new user
+
+  QueueURL:
+    Value: !Ref 'JobQueue'
+    Description: url of the queue
+
+  DataBucketName:
+    Value: !Ref 'DataBucket'
+    Description: Name of data bucket
+
+  WebAppAccessKey:
+    Value: !Ref 'WebAppKeys'
+    Description: AWSAccessKeyId of new user
+
+  WebAppSecretKey:
+    Value: !GetAtt [WebAppKeys, SecretAccessKey]
+    Description: AWSSecretAccessKey of new user
+
+  WebsiteURL:
+    Value: !GetAtt [DataBucket, WebsiteURL]
+    Description: URL for website hosted on S3
+
+  S3BucketSecureURL:
+    Value: !Join ['', ['https://', !GetAtt [DataBucket, DomainName]]]
+    Description: Name of S3 bucket to hold website content
