@@ -55,24 +55,38 @@ Upon success this command with give the web site for the parameter
 study and the S3 bucket name, it will look something like this (your URL will be different):
 
 Website: http://my-study-name-databucket-17c4yhty0nr5a.s3-website.us-east-2.amazonaws.com
+
 S3 Bucket: my-study-name-databucket-17c4yhty0nr5a
 
 ### Creating a parametric datafile
 
-Create a Python program to run the cases in your parameter study. See
-the example [prandtls_wedge.py](prandtls_wedge.py). For parameters you
-want to vary wrap the variables like this:
+In this step you create a Python program to run the cases in your
+parameter study.
+
+The example provided here is based on the Prandtl's wedge example from
+the FLAC3D manual. In the FLAC3D example, cohesion is constant, in
+this example the cohesion of the top 5 layers of zones is varied
+individually and the force displacement curve is measured.
+
+See the example [prandtls_wedge.py](prandtls_wedge.py). For parameters
+you want to vary wrap the variables like this:
 
 `cohesion_array = np.array({cohesion_array})`
 
-### Defining parameter study cases
+Any results you want to save should be added to the `result`
+dictionary at the end of the file.
 
-The file [create_cases.py](create_cases.py) defines the range or
-properties
+### Defining parameter study cases and adding them to the queue
+
+The file [create_cases.py](create_cases.py) defines the range of
+values that the unknowns should take. In this example, a hierarchical
+latin hypercube is used to vary the cohesion of 5 layers from 0.5e5 Pa
+to 5e5 Pa.
 
 `python create_cases.py`
 
 ### Attaching the Itasca software to the network
+
 - Open the website given in the configure step. The top of this web
   site contains a one-line Python program. Copy this line.
 - Open FLAC3D, 3DEC, or PFC3D
@@ -87,7 +101,8 @@ and any errors that have occurred.
 ### Processing the results
 
 The results are all in the S3 bucket given by the configuration step
-in the "data/" subfolder. The results are in JSON format.
+in the "data/" subfolder. The results are in JSON format and contain
+all the inputs and outputs.
 
 ### Cleaning up
 
@@ -114,4 +129,4 @@ operation. Permissions are restricted to only the needed operations
 but a malicious person could interfere with the system. The data file
 that runs the cases is publicly readable, but the results are not
 publicly readable. A more restrictive security model in which the
-client computer need to know the keys could be implemented.
+client computer needs to know the keys could be implemented.
