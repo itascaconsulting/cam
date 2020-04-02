@@ -5,7 +5,6 @@ from itasca import gridpointarray as gpa
 import numpy as np
 
 cohesion_array = np.array({cohesion_array})
-#cohesion_array = np.array([1.0e5, 2.0e5, 3.0e5, 4.0e5, 5.0e5])
 nz = 20
 
 datafile_string = f"""

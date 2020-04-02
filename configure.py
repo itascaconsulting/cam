@@ -57,4 +57,5 @@ upload_public_file("_bootstrap.py", "public/bootstrap.py", 'text/html')
 
 upload_public_file("cam_deps.bz2", "public/cam_deps.bz2")
 upload_public_file("cam_deps.zip", "public/cam_deps.zip")
-print(ret['WebsiteURL'])
+print("Website: ", ret['WebsiteURL'])
+print("S3 Bucket: ", ret['DataBucketName'])
