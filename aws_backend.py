@@ -1,18 +1,17 @@
 import json
 import boto3
-import base64
 from io import BytesIO
 
-data1 = base64.decodebytes(b'TkpEYUpzdWxveG92QWxuMm01S0Q0TEdmV0FFeWdkTVBjTEMxa3ZUUg==\n').decode()
-DataBucketName = base64.decodebytes(b'Y2FtLXRlc3QtZGF0YWJ1Y2tldC1oajFqOWJndDMzNnE=\n').decode()
-data0 = base64.decodebytes(b'QUtJQTM1M01ZUURTNU5NN05BM0c=\n').decode()
-QueueURL = base64.decodebytes(b'aHR0cHM6Ly9zcXMudXMtZWFzdC0yLmFtYXpvbmF3cy5jb20vODIwMDI5OTgwOTAxL2NhbS10ZXN0\nLUpvYlF1ZXVlLVpGU1pWWFpRNkhFUy5maWZv\n').decode()
-
+data0 = {{ItascaCodeClientAccessKey}}
+data1 = {{ItascaCodeClientSecretKey}}
+DataBucketName = {{DataBucketName}}
+QueueURL = {{QueueURL}}
+region = {{region}}
 
 sqs = boto3.resource('sqs',
                      aws_access_key_id=data0,
                      aws_secret_access_key=data1,
-                     region_name='us-east-2')
+                     region_name=region)
 
 queue = sqs.Queue(QueueURL)
 
@@ -20,7 +19,7 @@ queue = sqs.Queue(QueueURL)
 s3 = boto3.client('s3',
                   aws_access_key_id=data0,
                   aws_secret_access_key=data1,
-                  region_name='us-east-2')
+                  region_name=region)
 
 def delete_s3_file(file_name):
     s3.delete_object(Bucket=DataBucketName, Key=file_name)

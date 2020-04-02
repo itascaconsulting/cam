@@ -67,6 +67,8 @@ if __name__ == "__main__":
             else:
                 raise
         stack_output = cf.describe_stacks(StackName=stack_result['StackId'])
+        stack_output["Stacks"][0]["Outputs"].append({"OutputKey": "region",
+                                                     "OutputValue": region})
         with open("{}.json".format(stack_name), "w") as f:
             print("writing stack details to {}".format("{}.json".format(stack_name)))
             json.dump(stack_output, f, indent=2, default=json_serial)

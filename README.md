@@ -32,7 +32,8 @@ SQS queue
 This guide assumes you have the following:
 - An AWS account
 - Python 3.6 or later
-- The Python boto3 library installed and configured with sufficient
+- The Python `pyDOE` library
+- The Python `boto3` library installed and configured with sufficient
   permissions to:
   - Launch Cloud Formation stacks
   - Work with an SQS queue

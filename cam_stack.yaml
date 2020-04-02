@@ -10,6 +10,16 @@ Resources:
     Properties:
       WebsiteConfiguration:
         IndexDocument: index.html
+      CorsConfiguration:
+        CorsRules:
+          -
+            AllowedHeaders:
+              - "*"
+            AllowedMethods:
+              - "GET"
+            AllowedOrigins:
+              - "*"
+            MaxAge: 3000
 
   BucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -98,7 +108,7 @@ Resources:
         Statement:
         - Effect: Allow
           Action: ['s3:ListBucket']
-          Resource: !Sub "arn:aws:s3:::${DataBucket}/data/"
+          Resource: !Sub "arn:aws:s3:::${DataBucket}"
         - Effect: Allow
           Action: ['s3:GetObject']
           Resource: !Sub "arn:aws:s3:::${DataBucket}/data/pending-*"
@@ -118,11 +128,11 @@ Resources:
 
 Outputs:
 
-  AccessKey:
+  ItascaCodeClientAccessKey:
     Value: !Ref 'ItascaCodeClientKeys'
     Description: AWSAccessKeyId of new user
 
-  SecretKey:
+  ItascaCodeClientSecretKey:
     Value: !GetAtt [ItascaCodeClientKeys, SecretAccessKey]
     Description: AWSSecretAccessKey of new user
 

@@ -9,16 +9,16 @@ var run_data = [],
 
 function start() {
   var async_pending = 0,
-      data0 = "AKIA353MYQDSUMBWR2N3",
-      data1 = "5EyjORUYtpISOE8FnLyw8SGciBzctnSso84JWqWA";
+      data0 = "{{WebAppAccessKey}}",
+      data1 = "{{WebAppSecretKey}}";
   var s3 = new AWS.S3({accessKeyId: data0,
                        secretAccessKey: data1,
-                       region: 'us-east-2'}),
+                       region: "{{region}}"}),
       sqs = new AWS.SQS({accessKeyId: data0,
                          secretAccessKey: data1,
-                         region: 'us-east-2'}),
-      bucket_name = 'cam-test-databucket-hj1j9bgt336q',
-      queue_url = 'https://sqs.us-east-2.amazonaws.com/820029980901/cam-test-JobQueue-ZFSZVXZQ6HES.fifo';
+                         region: "{{region}}"}),
+      bucket_name = "{{DataBucketName}}",
+      queue_url = "{{QueueURL}}";
 
   var sqs_params = {
     QueueUrl: queue_url,
@@ -52,9 +52,9 @@ function start() {
         console.log("finished async load");
         allKeys.map(function (item) {
           var key = item;
-          if (key.startsWith("done")) {
+          if (key.startsWith("data/done")) {
             done_count++;
-          } else if (key.startsWith("pending")) {
+          } else if (key.startsWith("data/pending")) {
             // this is a running case read the object and fill in the table.
             s3.getObject({Bucket: bucket_name, Key: key },
                          function(err, data) {
@@ -73,7 +73,7 @@ function start() {
                          });
 
             pending_count++;
-          } else if (key.startsWith("error")) {
+          } else if (key.startsWith("data/error")) {
             s3.getObject({Bucket: bucket_name, Key: key },
                          function(err, data) {
                            if (err) console.log(err, err.stack); // an error occurred
@@ -98,8 +98,8 @@ function start() {
       }
     });
   }
-  var params = {Bucket: bucket_name, Prefix: "pending"};
+  var params = {Bucket: bucket_name, Prefix: "data/pending"};
   listAllKeys();
-  params = {Bucket: bucket_name, Prefix: "error"};
+  params = {Bucket: bucket_name, Prefix: "data/error"};
   listAllKeys();
 }

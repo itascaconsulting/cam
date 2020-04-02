@@ -23,21 +23,32 @@ print("Creating a temporary folder...")
 new_dir = tempfile.mkdtemp()
 os.chdir(new_dir)
 print(new_dir)
-deps_url = 'http://cam.itascacloud.com/cam_deps.zip'
-file_name = os.path.join(new_dir, "cam_deps.zip")
+
+deps_url = '{{WebsiteURL}}.com/public/cam_deps.bz2'
+file_name = os.path.join(new_dir, "cam_deps.bz2")
 print("Downloading dependencies...")
 with urllib.request.urlopen(deps_url) as response, open(file_name, 'wb') as out_file:
     shutil.copyfileobj(response, out_file)
-print("Inflating dependencies...")
-with ZipFile(file_name, 'r') as zipObj:
-   zipObj.extractall()
+
+## not all installs can unzip bzip2 for some reason
+try:
+    print("Inflating dependencies...")
+    with ZipFile(file_name, 'r') as zipObj:
+        zipObj.extractall()
+except RuntimeError as ex:
+    print("Cannot unzip bz2 trying .zip...")
+    deps_url = '{{WebsiteURL}}.com/public/cam_deps.zip'
+    file_name = os.path.join(new_dir, "cam_deps.zip")
+    print("Downloading dependencies...")
+    with urllib.request.urlopen(deps_url) as response, open(file_name, 'wb') as out_file:
+        shutil.copyfileobj(response, out_file)
+
 print("importing dependencies...")
 import boto3
 
 # Get the current AWS keys and the aws_backend.py definition.
 aws_backend = ModuleType('aws_backend.py', 'AWS interface functions')
-six.exec_(six.moves.urllib.request.urlopen('http://cam.itascacloud.com/aws_backend.py')\
-          .read(),
+six.exec_(six.moves.urllib.request.urlopen('{{WebsiteURL}}/public/aws_backend.py').read(),
           aws_backend.__dict__)
 sys.modules['aws_backend'] = aws_backend
 
