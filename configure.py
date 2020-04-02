@@ -4,14 +4,17 @@ import json
 import botocore
 from datetime import datetime
 import jinja2
-
+import os.path
 import argparse
 
 parser = argparse.ArgumentParser(description='Configure cloud formation stack for the cruncher automatic mode.')
-parser.add_argument('stack_json_file', type=str,
-                    help='json file describing stack')
+parser.add_argument('stack_name', type=str,
+                    help='The name of the parameter study.')
 args = parser.parse_args()
-filename = args.stack_json_file
+filename = args.stack_name+".json"
+
+if not os.path.isfile(filename):
+    raise RuntimeError("Cannot find {}".format(filename))
 
 with open(filename, "r") as f:
     stack_output = json.load(f)
@@ -21,7 +24,6 @@ ret = {}
 for item in outputs:
     ret[item["OutputKey"]] = item["OutputValue"]
 print(ret)
-
 
 region = ret["region"]
 s3 = boto3.client('s3', region_name=region)
@@ -53,7 +55,6 @@ upload_public_file("_aws_backend.py", "public/aws_backend.py", 'text/html')
 substitute_values("bootstrap.py", ret)
 upload_public_file("_bootstrap.py", "public/bootstrap.py", 'text/html')
 
-1/0
 upload_public_file("cam_deps.bz2", "public/cam_deps.bz2")
 upload_public_file("cam_deps.zip", "public/cam_deps.zip")
 print(ret['WebsiteURL'])

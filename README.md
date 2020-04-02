@@ -1,11 +1,3 @@
-index.html
-script.js
-
-index.html, script.js, and bootstrap.py, aws_backend.py, need to be publicly readable
-
-Refactor for a single bucket
-
-
 # Automation of distributed parameter studies using Itasca software
 Cruncher Automatic Mode
 
@@ -48,6 +40,10 @@ This guide assumes you have the following:
 
 $ python launch.py my-study-name
 
+$ python configure.py my-study-name.json
+
+$ python clean_up.py my-study-name
+
 Creating a parametric datafile
 
 Defining parameter study cases
@@ -67,6 +63,12 @@ Cleaning up
 - Not all errors are caught, some timeout network errors are not
   handled correctly and the client (the Itasca software) leaves the
   network.
-- Security: A publicly readable AWS key set is created to allow the
-  necessary operation. Permissions are restricted to only the needed
-  operations but a malicious person could interfere with the system.
+- If there is an error in the outer wrapper it can be difficult to debug.
+
+## Security
+A publicly readable AWS key set is created to allow the necessary
+operation. Permissions are restricted to only the needed operations
+but a malicious person could interfere with the system. The data file
+that runs the cases is publicly readable, but the results are not
+publicly readable. A more restrictive security model in which the
+client computer need to know the keys could be implemented.

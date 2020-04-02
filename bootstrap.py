@@ -76,7 +76,7 @@ while True:
         run_data.update({"computer": gethostname(),
                          "start_time": time.time(),
                          "parameters": parameters})
-        pending_file = "pending-{}.json".format(message_id)
+        pending_file = "data/pending-{}.json".format(message_id)
         aws_backend.put_JSON_on_s3(run_data, pending_file)
         datafile_to_run = safeformat(data_file_template, **parameters)
         try:
@@ -87,13 +87,13 @@ while True:
             print ("result of run", result)
             run_data.update({"result": result,
                              "end_time": time.time()})
-            aws_backend.put_JSON_on_s3(run_data, "done-{}.json".format(message_id))
+            aws_backend.put_JSON_on_s3(run_data, "data/done-{}.json".format(message_id))
         except Exception as err:
             ## in case of any error report what the problem was along with information.
             run_data.update({"exception": traceback.format_exc(),
                              "traceback": traceback.format_tb(err.__traceback__),
                              "error_time": time.time()})
-            aws_backend.put_JSON_on_s3(run_data, "error-{}.json".format(message_id))
+            aws_backend.put_JSON_on_s3(run_data, "data/error-{}.json".format(message_id))
             print(err)
         # delete pending file
         aws_backend.delete_s3_file(pending_file)
