@@ -24,7 +24,7 @@ new_dir = tempfile.mkdtemp()
 os.chdir(new_dir)
 print(new_dir)
 
-deps_url = '{{WebsiteURL}}.com/public/cam_deps.bz2'
+deps_url = '{{WebsiteURL}}/public/cam_deps.bz2'
 file_name = os.path.join(new_dir, "cam_deps.bz2")
 print("Downloading dependencies...")
 with urllib.request.urlopen(deps_url) as response, open(file_name, 'wb') as out_file:
@@ -32,12 +32,13 @@ with urllib.request.urlopen(deps_url) as response, open(file_name, 'wb') as out_
 
 ## not all installs can unzip bzip2 for some reason
 try:
-    print("Inflating dependencies...")
+    print("Inflating bz2 dependencies...")
     with ZipFile(file_name, 'r') as zipObj:
         zipObj.extractall()
+    print("success")
 except RuntimeError as ex:
     print("Cannot unzip bz2 trying .zip...")
-    deps_url = '{{WebsiteURL}}.com/public/cam_deps.zip'
+    deps_url = '{{WebsiteURL}}/public/cam_deps.zip'
     file_name = os.path.join(new_dir, "cam_deps.zip")
     print("Downloading dependencies...")
     with urllib.request.urlopen(deps_url) as response, open(file_name, 'wb') as out_file:

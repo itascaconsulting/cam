@@ -2,11 +2,11 @@ import json
 import boto3
 from io import BytesIO
 
-data0 = {{ItascaCodeClientAccessKey}}
-data1 = {{ItascaCodeClientSecretKey}}
-DataBucketName = {{DataBucketName}}
-QueueURL = {{QueueURL}}
-region = {{region}}
+data0 = "{{ItascaCodeClientAccessKey}}"
+data1 = "{{ItascaCodeClientSecretKey}}"
+DataBucketName = "{{DataBucketName}}"
+QueueURL = "{{QueueURL}}"
+region = "{{region}}"
 
 sqs = boto3.resource('sqs',
                      aws_access_key_id=data0,

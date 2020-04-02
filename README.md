@@ -61,6 +61,8 @@ Processing the results
 Cleaning up
 
 ## Limitations
+- The way the waiting is done FLAC3D can appear to freeze when waiting
+  for messages.
 - Messages that are in the queue for more than 14 days get deleted automatically.
 - Not all errors are caught, some timeout network errors are not
   handled correctly and the client (the Itasca software) leaves the
