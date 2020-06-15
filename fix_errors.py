@@ -2,19 +2,20 @@ import boto3
 import json
 import hashlib
 import datetime
-
-from aws_backend import QueueURL, DataBucketName, get_JSON_from_s3, delete_s3_file
+import _aws_backend
+from _aws_backend import QueueURL, DataBucketName, get_JSON_from_s3, delete_s3_file, region
 
 # list pending and look at start time
 # list errors
 # remove problem pending files
 # resubmit to queue
 
+sqs = boto3.resource('sqs', region_name=region)
 
-sqs = boto3.resource('sqs', region_name='us-east-2')
-s3 = boto3.client('s3', region_name='us-east-2')
+# monkey patch with our local credientials
+s3 = _aws_backend.s3 = boto3.client('s3', region_name=region)
+
 queue = sqs.Queue(QueueURL)
-
 
 def get_matching_s3_keys(bucket, prefix='', suffix=''):
     """
@@ -52,7 +53,7 @@ def resend_case(base_file, parameter_file):
 
 
 # list pending and error
-for key in get_matching_s3_keys(DataBucketName, "error"):
+for key in get_matching_s3_keys(DataBucketName, "data/error"):
     data = get_JSON_from_s3(key)
     del data["exception"]
     del data["traceback"]
@@ -60,7 +61,7 @@ for key in get_matching_s3_keys(DataBucketName, "error"):
     print("re-sending", key, data["parameter_file"])
     resend_case(data["base_file"], data["parameter_file"])
 
-for key in get_matching_s3_keys(DataBucketName, "pending"):
+for key in get_matching_s3_keys(DataBucketName, "data/pending"):
     data = get_JSON_from_s3(key)
     date = datetime.datetime.fromtimestamp(data["start_time"])
     time_delta_hours = (datetime.datetime.now()-date).total_seconds()/60/60.0
