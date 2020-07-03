@@ -13,9 +13,6 @@ from _aws_backend import DataBucketName, QueueURL, region
 s3 = boto3.client('s3', region_name=region)
 sqs = boto3.resource('sqs', region_name=region)
 
-
-
-
 def put_JSON_on_s3(data, object_name):
     s3.upload_fileobj(BytesIO(json.dumps(data).encode()), DataBucketName, object_name)
 
@@ -29,7 +26,7 @@ min_coh, max_coh = 0.5e5, 5e5
 assert max_coh > min_coh
 delta_coh = max_coh - min_coh
 
-lhc_sizes = range(3, 6)
+lhc_sizes = range(3, 5)
 run_data = {}
 
 for lhc_size in lhc_sizes:
@@ -40,19 +37,21 @@ for lhc_size in lhc_sizes:
     for i in range(len(hyper_cube)):
         if i % 100 == 0:
             print("sending", i)
-        parameters = {"cohesion_array" : cohesion_hyper_cube[i].tolist(),
-                      "raw_parameters" : hyper_cube[i].tolist()}
-        pfile = "data/pfile-{}.json".format(uuid.uuid4())
+        case_id = str(uuid.uuid4())
+        parameters = {
+            "cohesion_array" : cohesion_hyper_cube[i].tolist(),
+            "raw_parameters" : hyper_cube[i].tolist()}
+        pfile = "data/pfile-{}.json".format(case_id)
         put_JSON_on_s3(parameters, pfile)
-        data = {"base_file": remote_datafile,
+        data = {"case_id" : case_id,
+                "base_file": remote_datafile,
                 "parameter_file": pfile}
         body = json.dumps(data)
         mid = hashlib.sha256(body.encode()).hexdigest()
         reply = queue.send_message(MessageBody=body,
                                    MessageDeduplicationId=mid,
                                    MessageGroupId="main")
-        message_id = reply.get('MessageId')
-
-        run_data[message_id] = {"parameters": parameters, "data": data}
+        _ = reply.get('MessageId')
+        run_data[case_id] = {"parameters": parameters, "data": data}
 
 put_JSON_on_s3(run_data, "all_runs.json")

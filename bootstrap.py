@@ -65,18 +65,19 @@ def safeformat(str, **kwargs):
 while True:
     message = aws_backend.get_message()
     if message is not None:
-        message_id = message.message_id
-        print("got job from queue: ", message_id)
+        print("got job from queue: ", message.message_id)
         print(message)
         run_data = json.loads(message.body)
-        message.delete()
         print(message.body)
+        message.delete()
+        case_id = run_data["case_id"]
+        print("Case ID is: ", case_id)
         data_file_template = aws_backend.get_text_from_s3(run_data["base_file"])
         parameters = aws_backend.get_JSON_from_s3(run_data["parameter_file"])
         run_data.update({"computer": gethostname(),
                          "start_time": time.time(),
                          "parameters": parameters})
-        pending_file = "data/pending-{}.json".format(message_id)
+        pending_file = "data/pending-{}.json".format(case_id)
         aws_backend.put_JSON_on_s3(run_data, pending_file)
         datafile_to_run = safeformat(data_file_template, **parameters)
         try:
@@ -87,13 +88,13 @@ while True:
             print ("result of run", result)
             run_data.update({"result": result,
                              "end_time": time.time()})
-            aws_backend.put_JSON_on_s3(run_data, "data/done-{}.json".format(message_id))
+            aws_backend.put_JSON_on_s3(run_data, "data/done-{}.json".format(case_id))
         except Exception as err:
             ## in case of any error report what the problem was along with information.
             run_data.update({"exception": traceback.format_exc(),
                              "traceback": traceback.format_tb(err.__traceback__),
                              "error_time": time.time()})
-            aws_backend.put_JSON_on_s3(run_data, "data/error-{}.json".format(message_id))
+            aws_backend.put_JSON_on_s3(run_data, "data/error-{}.json".format(case_id))
             print(err)
         # delete pending file
         aws_backend.delete_s3_file(pending_file)
