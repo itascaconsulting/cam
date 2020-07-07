@@ -63,6 +63,8 @@ for key in get_matching_s3_keys(DataBucketName, "data/error"):
     print("re-sending", key, data["parameter_file"])
     resend_case(data["base_file"], data["parameter_file"], data["case_id"])
 
+# a problem can happen here: Listing pending objects in the s3 bucket and processing them are separate steps, before a pending file is processed it can be completed by a worker. This gives an error message. Usually just running the script again fixes the problem but it would be better to just ignore cases where the pending file is deleted by a worker.
+
 for key in get_matching_s3_keys(DataBucketName, "data/pending"):
     data = get_JSON_from_s3(key)
     date = datetime.datetime.fromtimestamp(data["start_time"])

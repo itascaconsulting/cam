@@ -107,7 +107,7 @@ all the inputs and outputs.
 ### Cleaning up
 
 - Delete all the files in the s3 bucket.
-- Run the command `python clean-up.py my-study-name` to delete the
+- Run the command `python clean_up.py my-study-name` to delete the
   cloud resources.
 
 ## Limitations
