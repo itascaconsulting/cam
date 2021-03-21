@@ -17,6 +17,11 @@ import six
 import traceback
 from types import ModuleType
 import sys
+import os
+
+def get_computer_name():
+    return gethostname() + "_" + os.name + "_" + str(os.getpid())
+
 
 ## first we bootstrap the environment
 print("Creating a temporary folder...")
@@ -74,7 +79,7 @@ while True:
         print("Case ID is: ", case_id)
         data_file_template = aws_backend.get_text_from_s3(run_data["base_file"])
         parameters = aws_backend.get_JSON_from_s3(run_data["parameter_file"])
-        run_data.update({"computer": gethostname(),
+        run_data.update({"computer": get_computer_name(),
                          "start_time": time.time(),
                          "parameters": parameters})
         pending_file = "data/pending-{}.json".format(case_id)
