@@ -9,7 +9,10 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.344.0.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha384-fYxN7HsDOBRo1wT/NSZ0LkoNlcXvpDpFy6WzB42LxuKAX7sBwgo7vuins+E1HCaw" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
+        integrity="sha384-fYxN7HsDOBRo1wT/NSZ0LkoNlcXvpDpFy6WzB42LxuKAX7sBwgo7vuins+E1HCaw"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.css">
     <script src="/public/script.js?ver=1.0"></script>
   </head>
   <body><h1>Cruncher Automatic Mode Network</h1>
@@ -26,16 +29,29 @@
     <div id="running"><h2>Jobs Running or Stopped </h2></div>
     <table id="running_table" class="table table-sm" style="font-size: small">
       <thead>
-        <tr><th>Computer</th><th>Start Time</th><th>File</th><th>Case ID</th></tr>
+        <tr>
+          <th scope="col">Computer</th>
+          <th scope="col">Start Time</th>
+          <th scope="col">File</th>
+          <th scope="col">Case ID</th>
+        </tr>
       </thead>
     </table>
     <div id="errors"><h2>Errors</h2></div>
     <table id="error_table" class="table table-sm" style="font-size: small">
       <thead>
-        <tr><th>Computer</th><th>Start Time</th><th>End
-        Time</th><th>Case ID</th><th>Error Message</th></tr>
+        <tr>
+          <th scope="col">Computer</th>
+          <th scope="col">Start Time</th>
+          <th scope="col">End Time</th>
+          <th scope="col">Case ID</th>
+          <th scope="col">Error Message</th>
+        </tr>
       </thead>
     </table>
   </body>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.js"></script>
   <script>start();</script>
 </html>

@@ -62,15 +62,20 @@ function start() {
                            else {
                              var run = JSON.parse(data.Body);
                              var moment_date = moment.unix(run.start_time);
+                             var date_str = moment_date.format("lll") + " (" +moment_date.fromNow()+")";
 
-                             var $tr = $('<tr>').append(
-                               $('<td>').text(run.computer),
-                               $('<td>').text(moment_date.format("lll") + " (" +moment_date.fromNow()+")"),
-                               $('<td>').text(run.base_file),
-                               $('<td>').text(run.parameter_file))
-                                                .appendTo('#running_table');
+                             table.row.add(
+                               $("<tr>")
+                                 .append($("<td>").text(run.computer),
+                                         $("<td>").attr("data-sort", run.start_time)
+                                                  .text(date_str),
+                                         $("<td>").text(run.base_file),
+                                         $("<td>").text(run.parameter_file)))
+                                  .node();
+                             table.draw(true);
+
                            }
-                         });
+            });
 
             pending_count++;
           } else if (key.startsWith("data/error")) {
@@ -90,7 +95,7 @@ function start() {
                                $('<td>').html("<details><pre>"+run.exception+"</pre></details>"))
                                                 .appendTo('#error_table');
                            }
-                         })
+            })
             error_count++;
           }
         });
@@ -98,6 +103,30 @@ function start() {
       }
     });
   }
+  var table = $("#running_table").DataTable({
+    "destroy": true,
+    columnDefs: [
+      {
+        targets: 2,
+        data: {
+          _: '2.display',
+          sort: '2.@data-sort',
+          type: '2.@data-sort'
+        }
+      },
+    ],
+    "pageLength": 200,
+    "language": {
+      "emptyTable": " "
+  }});
+  document.addEventListener('keydown', function(event) {
+    if(event.ctrlKey && event.key == 'k') {
+      event.preventDefault();
+      $('div.dataTables_filter input').focus();
+    }
+  });
+  $('div.dataTables_filter input').attr("placeholder","Ctrl+k").focus();
+
   var params = {Bucket: bucket_name, Prefix: "data/pending"};
   listAllKeys();
   params = {Bucket: bucket_name, Prefix: "data/error"};
