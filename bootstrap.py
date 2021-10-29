@@ -22,6 +22,8 @@ import os
 def get_computer_name():
     return gethostname() + "_" + os.name + "_" + str(os.getpid())
 
+waiting_file = "data/waiting-" + get_computer_name() + ".json"
+
 
 ## first we bootstrap the environment
 print("Creating a temporary folder...")
@@ -71,6 +73,7 @@ wait_count = 0
 while True:
     message = aws_backend.get_message()
     if message is not None:
+        aws_backend.delete_s3_file(waiting_file)
         wait_count = 0
         print("got job from queue: ", message.message_id)
         print(message)
@@ -109,8 +112,7 @@ while True:
     else:
         # we are waiting...
         if wait_count % 5 == 0: # only write the first time and every subsequent 5th time.
-            aws_backend.put_JSON_on_s3({"time": time.time()},
-                                       "data/waiting_" + get_computer_name() + ".json")
+            aws_backend.put_JSON_on_s3({"time": time.time()}, waiting_file)
         wait_count += 1
         for s in range(100):  # check queue every 100 seconds
             # these loops prevents blocking in the GUI

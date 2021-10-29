@@ -71,6 +71,9 @@ Resources:
           Resource: !Sub "arn:aws:s3:::${DataBucket}/data/pending-*"
         - Effect: Allow
           Action: ['s3:PutObject']
+          Resource: !Sub "arn:aws:s3:::${DataBucket}/data/waiting-*"
+        - Effect: Allow
+          Action: ['s3:PutObject']
           Resource: !Sub "arn:aws:s3:::${DataBucket}/data/error-*"
         - Effect: Allow
           Action: ['s3:PutObject']
@@ -81,6 +84,9 @@ Resources:
         - Effect: Allow
           Action: ['s3:DeleteObject']
           Resource: !Sub "arn:aws:s3:::${DataBucket}/data/pending-*"
+        - Effect: Allow
+          Action: ['s3:DeleteObject']
+          Resource: !Sub "arn:aws:s3:::${DataBucket}/data/waiting-*"
       Groups: [!Ref 'ItascaCodeClientUserGroup']
 
   ItascaCodeClientKeys:
@@ -115,6 +121,9 @@ Resources:
         - Effect: Allow
           Action: ['s3:GetObject']
           Resource: !Sub "arn:aws:s3:::${DataBucket}/data/error-*"
+        - Effect: Allow
+          Action: ['s3:GetObject']
+          Resource: !Sub "arn:aws:s3:::${DataBucket}/data/waiting-*"
         - Effect: Allow
           Action: ['sqs:GetQueueAttributes']
           Resource: !GetAtt [JobQueue, Arn]
