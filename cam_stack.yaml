@@ -77,10 +77,10 @@ Resources:
           Resource: !Sub "arn:aws:s3:::${DataBucket}/data/error-*"
         - Effect: Allow
           Action: ['s3:PutObject']
-          Resource: !Sub "arn:aws:s3:::${DataBucket}/data/done-*"
+          Resource: !Sub "arn:aws:s3:::${DataBucket}/data/*done-*"
         - Effect: Allow
           Action: ['s3:GetObject']
-          Resource: !Sub "arn:aws:s3:::${DataBucket}/data/pfile-*"
+          Resource: !Sub "arn:aws:s3:::${DataBucket}/data/*pfile-*"
         - Effect: Allow
           Action: ['s3:DeleteObject']
           Resource: !Sub "arn:aws:s3:::${DataBucket}/data/pending-*"
