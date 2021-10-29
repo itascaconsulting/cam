@@ -67,9 +67,11 @@ def safeformat(str, **kwargs):
     return str.format_map(replacements)
 
 # Main receive message loop
+wait_count = 0
 while True:
     message = aws_backend.get_message()
     if message is not None:
+        wait_count = 0
         print("got job from queue: ", message.message_id)
         print(message)
         run_data = json.loads(message.body)
@@ -79,6 +81,7 @@ while True:
         print("Case ID is: ", case_id)
         data_file_template = aws_backend.get_text_from_s3(run_data["base_file"])
         parameters = aws_backend.get_JSON_from_s3(run_data["parameter_file"])
+        result_file = run_data["parameter_file"].replace("pfile", "done")
         run_data.update({"computer": get_computer_name(),
                          "start_time": time.time(),
                          "parameters": parameters})
@@ -93,7 +96,7 @@ while True:
             print ("result of run", result)
             run_data.update({"result": result,
                              "end_time": time.time()})
-            aws_backend.put_JSON_on_s3(run_data, "data/done-{}.json".format(case_id))
+            aws_backend.put_JSON_on_s3(run_data, result_file)
         except Exception as err:
             ## in case of any error report what the problem was along with information.
             run_data.update({"exception": traceback.format_exc(),
@@ -105,6 +108,11 @@ while True:
         aws_backend.delete_s3_file(pending_file)
     else:
         # we are waiting...
-        # we could write a file to say we are waiting?
-        # do not churn s3 too much...
-        time.sleep(100)
+        if wait_count % 5 == 0: # only write the first time and every subsequent 5th time.
+            aws_backend.put_JSON_on_s3({"time": time.time()},
+                                       "data/waiting_" + get_computer_name() + ".json")
+        wait_count += 1
+        for s in range(100):  # check queue every 100 seconds
+            # these loops prevents blocking in the GUI
+            for cs in range(100):
+                time.sleep(0.01)

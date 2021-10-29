@@ -97,9 +97,23 @@ function start() {
                            }
             })
             error_count++;
+          } else if (key.startsWith("data/waiting")) {
+            s3.getObject({Bucket: bucket_name, Key: key },
+                         function(err, data) {
+                           if (err) console.log(err, err.stack); // an error occurred
+                           else {
+                             var run = JSON.parse(data.Body);
+                             var moment_start = moment.unix(run.time),
+                                 date_str = moment_start.format("lll") + " (" +moment_start.fromNow()+")";
+                             var $tr = $('<tr>').append(
+                               $('<td>').text(key),
+                               $('<td>').text(date_str),
+                               $('<td>').text(run.time))
+                                                .appendTo('#waiting_table');
+                           }
+            })
           }
         });
-        /* $("#finished").append("<H2>").text(done_count + " Jobs Finished"); */
       }
     });
   }
@@ -130,5 +144,7 @@ function start() {
   var params = {Bucket: bucket_name, Prefix: "data/pending"};
   listAllKeys();
   params = {Bucket: bucket_name, Prefix: "data/error"};
+  listAllKeys();
+  params = {Bucket: bucket_name, Prefix: "data/waiting"};
   listAllKeys();
 }
