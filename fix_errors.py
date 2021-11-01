@@ -4,6 +4,7 @@ import hashlib
 import datetime
 import _aws_backend
 from _aws_backend import QueueURL, DataBucketName, get_JSON_from_s3, delete_s3_file, region
+import botocore
 
 # list pending and look at start time
 # list errors
@@ -59,16 +60,30 @@ for key in get_matching_s3_keys(DataBucketName, "data/error"):
     data = get_JSON_from_s3(key)
     del data["exception"]
     del data["traceback"]
-
     print("re-sending", key, data["parameter_file"])
     resend_case(data["base_file"], data["parameter_file"], data["case_id"])
 
-# a problem can happen here: Listing pending objects in the s3 bucket and processing them are separate steps, before a pending file is processed it can be completed by a worker. This gives an error message. Usually just running the script again fixes the problem but it would be better to just ignore cases where the pending file is deleted by a worker.
-
 for key in get_matching_s3_keys(DataBucketName, "data/pending"):
-    data = get_JSON_from_s3(key)
-    date = datetime.datetime.fromtimestamp(data["start_time"])
-    time_delta_hours = (datetime.datetime.now()-date).total_seconds()/60/60.0
-    if time_delta_hours > 1:
-        print("re-sending ({} hours old)".format(int(time_delta_hours)), key, data["parameter_file"])
-        resend_case(data["base_file"], data["parameter_file"], data["case_id"])
+    try:
+        data = get_JSON_from_s3(key)
+        date = datetime.datetime.fromtimestamp(data["start_time"])
+        time_delta_hours = (datetime.datetime.now()-date).total_seconds()/60/60.0
+        if time_delta_hours > 1:
+            print("re-sending ({} hours old)".format(int(time_delta_hours)), key, data["parameter_file"])
+            resend_case(data["base_file"], data["parameter_file"], data["case_id"])
+    except botocore.exceptions.ClientError as error:
+        pass
+
+
+
+# the waiting files are refreshed every 500 seconds, so anything older than that we can remove
+for key in get_matching_s3_keys(DataBucketName, "data/waiting"):
+    try:
+        data = get_JSON_from_s3(key)
+        date = datetime.datetime.fromtimestamp(data["time"])
+        time_delta_seconds = (datetime.datetime.now()-date).total_seconds()
+        if time_delta_seconds > 600:
+            print("waiting computer (last ping {} seconds ago) - clearing this file".format(int(time_delta_hours)), key)
+            s3.delete_object(Bucket=DataBucketName, Key=key)
+    except botocore.exceptions.ClientError as error:
+        pass
