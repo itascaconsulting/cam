@@ -71,7 +71,7 @@ individually and the force displacement curve is measured.
 See the example [prandtls_wedge.py](prandtls_wedge.py). For parameters
 you want to vary wrap the variables like this:
 
-`cohesion_array = np.array({cohesion_array})`
+`cohesion_array = np.array({{cohesion_array}})`
 
 Any results you want to save should be added to the `result`
 dictionary at the end of the file.
@@ -103,6 +103,18 @@ and any errors that have occurred.
 The results are all in the S3 bucket given by the configuration step
 in the "data/" subfolder. The results are in JSON format and contain
 all the inputs and outputs.
+
+A command like this (the s3 address will be different in your case)
+copies all the parameter study results to your local computer. Make a
+folder called results first.
+
+`aws s3 sync s3://my-queue-test-databucket-m19wz8wl341z/data/my_cases/my_folder/ ./results --exclude "*" --include "done*"`
+
+Running this script:
+`python process_results.py`
+
+reads all the cases into a feature array X and a target array Y, these
+arrays can be used in machine learning model training.
 
 ### Cleaning up
 
