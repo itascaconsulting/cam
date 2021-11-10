@@ -4,7 +4,7 @@ from itasca import zonearray as za
 from itasca import gridpointarray as gpa
 import numpy as np
 
-cohesion_array = np.array({cohesion_array})
+cohesion_array = np.array({{cohesion_array}})
 nz = 20
 
 datafile_string = f"""

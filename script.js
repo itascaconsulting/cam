@@ -64,15 +64,15 @@ function start() {
                              var moment_date = moment.unix(run.start_time);
                              var date_str = moment_date.format("lll") + " (" +moment_date.fromNow()+")";
 
-                             table.row.add(
+                             table_pending.row.add(
                                $("<tr>")
                                  .append($("<td>").text(run.computer),
                                          $("<td>").attr("data-sort", run.start_time)
                                                   .text(date_str),
                                          $("<td>").text(run.base_file),
                                          $("<td>").text(run.parameter_file)))
-                                  .node();
-                             table.draw(true);
+                                          .node();
+                             table_pending.draw(true);
 
                            }
             });
@@ -105,11 +105,14 @@ function start() {
                              var run = JSON.parse(data.Body);
                              var moment_start = moment.unix(run.time),
                                  date_str = moment_start.format("lll") + " (" +moment_start.fromNow()+")";
-                             var $tr = $('<tr>').append(
-                               $('<td>').text(key),
-                               $('<td>').text(date_str),
-                               $('<td>').text(run.time))
-                                                .appendTo('#waiting_table');
+                             table_waiting.row.add(
+                               $("<tr>")
+                                 .append(
+                                   $('<td>').text(key),
+                                   $('<td>').attr("data-sort", run.time)
+                                            .text(date_str),
+                                   $('<td>').text(run.time))).node();
+                             table_waiting.draw(true);
                            }
             })
           }
@@ -117,7 +120,7 @@ function start() {
       }
     });
   }
-  var table = $("#running_table").DataTable({
+  var table_pending = $("#running_table").DataTable({
     "destroy": true,
     columnDefs: [
       {
@@ -133,6 +136,24 @@ function start() {
     "language": {
       "emptyTable": " "
   }});
+
+  var table_waiting = $("#waiting_table").DataTable({
+    "destroy": true,
+    columnDefs: [
+      {
+        targets: 2,
+        data: {
+          _: '2.display',
+          sort: '2.@data-sort',
+          type: '2.@data-sort'
+        }
+      },
+    ],
+    "pageLength": 200,
+    "language": {
+      "emptyTable": " "
+  }});
+
   document.addEventListener('keydown', function(event) {
     if(event.ctrlKey && event.key == 'k') {
       event.preventDefault();

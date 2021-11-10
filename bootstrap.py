@@ -18,6 +18,7 @@ import traceback
 from types import ModuleType
 import sys
 import os
+import jinja2
 
 def get_computer_name():
     return gethostname() + "_" + os.name + "_" + str(os.getpid())
@@ -60,14 +61,6 @@ six.exec_(six.moves.urllib.request.urlopen('{{WebsiteURL}}/public/aws_backend.py
           aws_backend.__dict__)
 sys.modules['aws_backend'] = aws_backend
 
-# we need this because we do not want to replace everything in {}
-def safeformat(str, **kwargs):
-    class SafeDict(dict):
-        def __missing__(self, key):
-            return '{' + key + '}'
-    replacements = SafeDict(**kwargs)
-    return str.format_map(replacements)
-
 # Main receive message loop
 wait_count = 0
 while True:
@@ -90,9 +83,10 @@ while True:
                          "parameters": parameters})
         pending_file = "data/pending-{}.json".format(case_id)
         aws_backend.put_JSON_on_s3(run_data, pending_file)
-        datafile_to_run = safeformat(data_file_template, **parameters)
+
         try:
             ## try to actually run the file and upload the result
+            datafile_to_run = jinja2.Environment().from_string(data_file_template).render(parameters)
             result = None
             local_ns = locals()
             exec(datafile_to_run, globals(), local_ns)
