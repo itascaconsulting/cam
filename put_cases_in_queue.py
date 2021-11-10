@@ -8,6 +8,7 @@ import hashlib
 import base64
 import uuid
 from io import BytesIO
+import joblib
 
 from _aws_backend import DataBucketName, QueueURL, region
 s3 = boto3.client('s3', region_name=region)
@@ -33,21 +34,21 @@ cube_files = ["cube_5_3.pkl", "cube_5_4.pkl"]
 run_data = {}
 
 for filename in cube_files:
-    full_cube = np.load(filename)
+    case_ids, full_cube = joblib.load(filename)
     start, end = 0, len(full_cube)
-    print(f"batch {step}: {start}-{end}")
+    print(f"batch: {start}-{end}")
 
     layers = number_of_unknowns
     raw_hyper_cube = full_cube[:, :layers]
     cohesion_hyper_cube = full_cube[:, layers:2*layers]
 
-    for i in range(len(hyper_cube)):
+    for i in range(len(raw_hyper_cube)):
         if i % 100 == 0:
             print("sending", i)
         case_id = case_ids[i]
         parameters = {
             "cohesion_array" : cohesion_hyper_cube[i].tolist(),
-            "raw_parameters" : hyper_cube[i].tolist()}
+            "raw_parameters" : raw_hyper_cube[i].tolist()}
         pfile = f"data/{prefix}/pfile-{case_id}.json"
         put_JSON_on_s3(parameters, pfile)
         data = {"case_id" : case_id,

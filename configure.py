@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser(description='Configure cloud formation stack fo
 parser.add_argument('stack_name', type=str,
                     help='The name of the parameter study.')
 args = parser.parse_args()
-filename = args.stack_name+".json"
+filename = args.stack_name
 
 if not os.path.isfile(filename):
     raise RuntimeError("Cannot find {}".format(filename))
