@@ -123,16 +123,11 @@ arrays can be used in machine learning model training.
   cloud resources.
 
 ## Limitations
-- The way the waiting is done FLAC3D can appear to freeze when waiting
-  for messages.
 - Messages that are in the queue for more than 14 days get deleted automatically.
 - Not all errors are caught, some timeout network errors are not
   handled correctly and the client (the Itasca software) leaves the
   network.
 - If there is an error in the outer wrapper it can be difficult to debug.
-- It would be better to use Jinja2 for the templating, in some cases
-  the format string method used to put values into the case file can
-  go wrong if you have a dictionary literal `{}` in your case file.
 
 ## Security
 
