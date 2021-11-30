@@ -26,17 +26,31 @@
 
     <div><h2 id="inqueue"></h2></div>
     <div><h2 id="finished"></h2></div>
-    <div id="running"><h2>Jobs Running or Stopped </h2></div>
-    <table id="running_table" class="table table-sm" style="font-size: small">
+    <div id="summary">Summary running...</div>
+    <table id="summary_table" class="table table-sm" style="font-size: small">
       <thead>
         <tr>
           <th scope="col">Computer</th>
-          <th scope="col">Start Time</th>
-          <th scope="col">File</th>
-          <th scope="col">Case ID</th>
+          <th scope="col">Operating System</th>
+          <th scope="col">Running</th>
+          <th scope="col">Longest Running</th>
+          <th scope="col">Waiting</th>
+          <th scope="col">Longest Waiting</th>
+          <th scope="col">Error Count</th>
         </tr>
       </thead>
     </table>
+    <div id="running"><h2>Jobs Running or Stopped </h2></div>
+      <table id="running_table" class="table table-sm" style="font-size: small">
+        <thead>
+          <tr>
+            <th scope="col">Computer</th>
+            <th scope="col">Start Time</th>
+            <th scope="col">File</th>
+            <th scope="col">Case ID</th>
+          </tr>
+        </thead>
+      </table>
     <div id="waiting"><h2>Waiting Computers</h2></div>
     <table id="waiting_table" class="table table-sm" style="font-size: small">
       <thead>
