@@ -25,6 +25,11 @@ def get_computer_name():
 
 waiting_file = "data/waiting-" + get_computer_name() + ".json"
 
+it.command("[global v0 = version.code.major]")
+it.command("[global v1 = version.code.minor]")
+code_major, code_minor = it.fish.get("v0"), it.fish.get("v1")
+version_string = "{}.{}".format(code_major, code_minor)
+
 
 ## first we bootstrap the environment
 print("Creating a temporary folder...")
@@ -79,6 +84,7 @@ while True:
         parameters = aws_backend.get_JSON_from_s3(run_data["parameter_file"])
         result_file = run_data["parameter_file"].replace("pfile", "done")
         run_data.update({"computer": get_computer_name(),
+                         "version": version_string,
                          "start_time": time.time(),
                          "parameters": parameters})
         pending_file = "data/pending-{}.json".format(case_id)

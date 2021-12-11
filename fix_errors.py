@@ -82,8 +82,8 @@ for key in get_matching_s3_keys(DataBucketName, "data/waiting"):
         data = get_JSON_from_s3(key)
         date = datetime.datetime.fromtimestamp(data["time"])
         time_delta_seconds = (datetime.datetime.now()-date).total_seconds()
-        if time_delta_seconds > 600:
-            print("waiting computer (last ping {} seconds ago) - clearing this file".format(int(time_delta_hours)), key)
+        if time_delta_seconds > 900:
+            print("waiting computer (last ping {} seconds ago) - clearing this file".format(int(time_delta_seconds)), key)
             s3.delete_object(Bucket=DataBucketName, Key=key)
     except botocore.exceptions.ClientError as error:
         pass
