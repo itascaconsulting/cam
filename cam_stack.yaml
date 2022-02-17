@@ -6,7 +6,7 @@ Resources:
 
   DataBucket:
     Type: "AWS::S3::Bucket"
-    DeletionPolicy: Delete
+    DeletionPolicy: Retain
     Properties:
       WebsiteConfiguration:
         IndexDocument: index.html
