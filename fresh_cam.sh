@@ -9,7 +9,6 @@ cp ../../cam/aws_backend.py .
 cp ../../cam/cam_deps.zip .
 cp ../../cam/configure.py .
 cp ../../cam/index.html .
-cp ../../cam/create_cases .
-cp ../../cam/create_cases .
+cp ../../cam/create_cases.py .
 cp ../../cam/put_cases_in_queue.py .
 cp ../../cam/process_results.py .
