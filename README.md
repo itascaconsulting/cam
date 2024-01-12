@@ -46,10 +46,14 @@ Launch the Cloud Formation stack with this command.
 `python launch.py my-study-name`
 
 This creates the SQS queue, the S3 bucket and gets the permissions set
-up. Replace my-study-name with a name for your parameter study. Next,
-run this command to configure the website and support files:
+up. Replace my-study-name with a name for your parameter study.
 
-`python configure.py my-study-name`
+A manual step needs to be done here: Enable ACL on the s3 bucket that
+was created via the AWS web portal.
+
+Next, run this command to configure the website and support files:
+
+`python configure.py my-study-name.json`
 
 Upon success this command with give the web site for the parameter
 study and the S3 bucket name, it will look something like this (your URL will be different):

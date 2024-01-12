@@ -20,6 +20,9 @@ Resources:
             AllowedOrigins:
               - "*"
             MaxAge: 3000
+      PublicAccessBlockConfiguration:
+        BlockPublicPolicy: false
+        RestrictPublicBuckets: false
 
   BucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -30,12 +33,12 @@ Resources:
             Effect: Allow
             Principal: '*'
             Action: 's3:GetObject'
-            Resource: !Sub "arn:aws:s3:::${DataBucket}/public/*"
+            Resource: !Sub arn:aws:s3:::${DataBucket}/public/*
           -
             Effect: Allow
             Principal: '*'
             Action: 's3:GetObject'
-            Resource: !Sub "arn:aws:s3:::${DataBucket}/index.html"
+            Resource: !Sub arn:aws:s3:::${DataBucket}/index.html
 
       Bucket: !Ref DataBucket
 
