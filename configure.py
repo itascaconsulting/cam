@@ -6,6 +6,7 @@ from datetime import datetime
 import jinja2
 import os.path
 import argparse
+import time
 
 parser = argparse.ArgumentParser(description='Configure cloud formation stack for the cruncher automatic mode.')
 parser.add_argument('stack_name', type=str,
@@ -20,6 +21,8 @@ with open(filename, "r") as f:
     stack_output = json.load(f)
 
 outputs = stack_output["Stacks"][0]["Outputs"]
+study_name = stack_output["Stacks"][0]["StackName"]
+
 ret = {}
 for item in outputs:
     ret[item["OutputKey"]] = item["OutputValue"]
@@ -27,6 +30,7 @@ print(ret)
 
 region = ret["region"]
 s3 = boto3.client('s3', region_name=region)
+cf = boto3.client('cloudfront', region_name=region)
 
 def substitute_values(filename, args):
     templateLoader = jinja2.FileSystemLoader(searchpath="./")
@@ -57,5 +61,124 @@ upload_public_file("_bootstrap.py", "public/bootstrap.py", 'text/html')
 
 upload_public_file("cam_deps.bz2", "public/cam_deps.bz2")
 upload_public_file("cam_deps.zip", "public/cam_deps.zip")
-print("Website: ", ret['WebsiteURL'])
+
+print("Creating a Cloud Front distribution...")
+cf_distribution = cf.create_distribution(
+    DistributionConfig={
+        'CallerReference': f'{study_name}_{str(int(time.time()))}',
+        'Aliases': {
+            'Quantity': 0,
+            'Items': []
+        },
+        'DefaultRootObject': '',
+        'Origins': {
+            'Quantity': 1,
+            'Items': [
+                {
+                    'Id': study_name,
+                    'DomainName': ret['WebsiteURL'].removeprefix('http://'), # python >= 3.9
+                    'OriginPath': '',
+                    'CustomHeaders': {
+                        'Quantity': 0,
+                        'Items': []
+                    },
+                    'CustomOriginConfig': {
+                        'HTTPPort': 80,
+                        'HTTPSPort': 443,
+                        'OriginProtocolPolicy': 'http-only',
+                        'OriginSslProtocols': {
+                            'Quantity': 4,
+                            'Items': [
+                                'SSLv3','TLSv1','TLSv1.1','TLSv1.2',
+                            ]
+                        },
+                        'OriginReadTimeout': 30,
+                        'OriginKeepaliveTimeout': 5
+                    },
+                    'ConnectionAttempts': 3,
+                    'ConnectionTimeout': 10,
+                    'OriginShield': {
+                        'Enabled': False
+                    },
+                    'OriginAccessControlId': ''
+                },
+            ]
+        },
+        'OriginGroups': {
+            'Quantity': 0,
+            'Items': []
+        },
+        'DefaultCacheBehavior': {
+            'TargetOriginId': study_name,
+            'TrustedSigners': {
+                'Enabled': False,
+                'Quantity': 0
+            },
+            'TrustedKeyGroups': {
+                'Enabled': False,
+                'Quantity': 0
+            },
+            'ViewerProtocolPolicy': 'redirect-to-https',
+            'AllowedMethods': {
+                'Quantity': 7,
+                'Items': [
+                    'GET','HEAD','POST','PUT','PATCH','OPTIONS','DELETE'
+                ],
+                'CachedMethods': {
+                    'Quantity': 2,
+                    'Items': [
+                        'GET','HEAD'
+                    ]
+                }
+            },
+            'SmoothStreaming': False,
+            'CachePolicyId': '658327ea-f89d-4fab-a63d-7e88639e58f6',
+            'Compress': True
+        },
+        'CacheBehaviors': {
+            'Quantity': 0
+        },
+        'CustomErrorResponses': {
+            'Quantity': 0,
+            'Items': []
+        },
+        'Comment': f'cloudfront distribution for {study_name}',
+        'Logging': {
+            'Enabled': False,
+            'IncludeCookies': False,
+            'Bucket': '',
+            'Prefix': ''
+        },
+        'PriceClass': 'PriceClass_All',
+        'Enabled': True,
+        'ViewerCertificate': {
+            'CloudFrontDefaultCertificate': True
+        },
+        'Restrictions': {
+            'GeoRestriction': {
+                'RestrictionType': 'none',
+                'Quantity': 0,
+                'Items': []
+            }
+        },
+        'WebACLId': '',
+        'HttpVersion': 'http2',
+        'IsIPV6Enabled': True,
+        'ContinuousDeploymentPolicyId': '',
+        'Staging': False
+    }
+)
+
+print('...waiting until CloudFront distribution is deployed - this may take a few minutes...')
+waiter = cf.get_waiter('distribution_deployed')
+waiter.wait(
+    Id = cf_distribution['Distribution']['Id'],
+    WaiterConfig = {
+        'Delay': 30,
+        'MaxAttempts': 50
+    }
+)
+print("CloudFront distribution is deployed")
+
+print(f"Website: https://{cf_distribution['Distribution']['DomainName']}")
 print("S3 Bucket: ", ret['DataBucketName'])

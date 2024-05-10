@@ -73,4 +73,5 @@ if __name__ == "__main__":
             print("writing stack details to {}".format("{}.json".format(stack_name)))
             json.dump(stack_output, f, indent=2, default=json_serial)
         outputs = stack_output["Stacks"][0]["Outputs"]
-        print("done")
+        print(outputs)
+        print("\ndone\n")
