@@ -19,7 +19,7 @@ def put_JSON_on_s3(data, object_name):
     s3.upload_fileobj(BytesIO(json.dumps(data).encode()), DataBucketName, object_name)
 
 
-prefixes = ["my_cases", "my_folder"]  # any number of folders is OK except zero
+prefixes = ["demo", "set0"]  # any number of folders is OK except zero
 assert prefixes
 prefix = "/".join(prefixes)
 
@@ -29,7 +29,7 @@ remote_datafile = "public/" + local_datafile
 s3.upload_file(local_datafile, DataBucketName, remote_datafile)
 
 number_of_unknowns = 5
-cubes = (7,8,9,10)
+cubes = (3,4,5,6,7,8,9,10,11,12)
 cube_files = [f"cube_5_{_}.pkl" for _ in cubes] # use glob.glob here ?
 run_data = {}
 

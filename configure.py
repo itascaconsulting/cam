@@ -8,6 +8,8 @@ import os.path
 import argparse
 import time
 
+
+
 parser = argparse.ArgumentParser(description='Configure cloud formation stack for the cruncher automatic mode.')
 parser.add_argument('stack_name', type=str,
                     help='The name of the parameter study.')
@@ -22,6 +24,14 @@ with open(filename, "r") as f:
 
 outputs = stack_output["Stacks"][0]["Outputs"]
 study_name = stack_output["Stacks"][0]["StackName"]
+
+ret = {}
+for item in outputs:
+    ret[item["OutputKey"]] = item["OutputValue"]
+
+region = ret["region"]
+s3 = boto3.client('s3', region_name=region)
+cf = boto3.client('cloudfront', region_name=region)
 
 
 print("Creating a Cloud Front distribution...")
@@ -147,18 +157,12 @@ print("S3 Bucket: ", ret['DataBucketName'])
 
 
 
-ret = {}
-for item in outputs:
-    ret[item["OutputKey"]] = item["OutputValue"]
 
 # swap in the Cloud front url
 assert "WebsiteURL" in ret
 ret["WebsiteURL"] = f"https://{cf_distribution['Distribution']['DomainName']}"
 print(ret)
 
-region = ret["region"]
-s3 = boto3.client('s3', region_name=region)
-cf = boto3.client('cloudfront', region_name=region)
 
 def substitute_values(filename, args):
     templateLoader = jinja2.FileSystemLoader(searchpath="./")

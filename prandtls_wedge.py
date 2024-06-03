@@ -66,7 +66,7 @@ heights = list(set(z))
 heights.sort()
 layer_number = np.zeros(len(z))
 for i, h in enumerate(heights[::-1]):
-    layer_number[z==h] = i
+    layer_number[z==h] = i//2 # take 2 zone thick layers
 za.set_extra(1, layer_number)
 
 cohesion = za.prop_scalar("cohesion")
