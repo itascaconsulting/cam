@@ -36,7 +36,7 @@ import boto3
 
 # Get the current AWS keys and the aws_backend.py definition.
 aws_backend = ModuleType('aws_backend.py', 'AWS interface functions')
-six.exec_(six.moves.urllib.request.urlopen('{{WebsiteURL}}/public/aws_backend.py').read(),
+six.exec_(six.moves.urllib.request.urlopen('{{WebsiteURL}}/public/aws_backend').read(),
           aws_backend.__dict__)
 sys.modules['aws_backend'] = aws_backend
 

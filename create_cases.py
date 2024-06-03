@@ -18,7 +18,7 @@ delta_coh = max_coh - min_coh
 
 number_of_unknowns = 5
 
-lhc_sizes = range(2, 8)
+lhc_sizes = range(2, 13)
 
 for lhc_size in lhc_sizes:
     print("creating cube 2**{}".format(lhc_size))

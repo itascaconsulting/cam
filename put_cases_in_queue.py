@@ -29,11 +29,11 @@ remote_datafile = "public/" + local_datafile
 s3.upload_file(local_datafile, DataBucketName, remote_datafile)
 
 number_of_unknowns = 5
-
-cube_files = ["cube_5_3.pkl", "cube_5_4.pkl"] # use glob.glob here ?
+cubes = (7,8,9,10)
+cube_files = [f"cube_5_{_}.pkl" for _ in cubes] # use glob.glob here ?
 run_data = {}
 
-for cube_id, filename in enumerate(cube_files):
+for cube_id, filename in zip(cubes, cube_files):
     case_ids, full_cube = joblib.load(filename)
     start, end = 0, len(full_cube)
     print(f"batch: {start}-{end}")
@@ -54,7 +54,7 @@ for cube_id, filename in enumerate(cube_files):
         data = {"case_id" : case_id,
                 "base_file": remote_datafile,
                 "parameter_file": pfile,
-               "cube_id": cube_id}
+                "cube_id": cube_id}
         body = json.dumps(data)
         mid = hashlib.sha256(body.encode()).hexdigest()
         reply = queue.send_message(MessageBody=body,
