@@ -1,8 +1,16 @@
-try:
-    import itasca as it
-    it.command("python-reset-state false")
-except:
-    pass
+import itasca as it
+it.command("python-reset-state false")
+
+assert it.dim() == 3, "FLAC3D is required"
+#assert it.dim() == 2, "FLAC2D 9.0 is required"
+
+it.command("[global v0 = version.code.major]")
+it.command("[global v1 = version.code.minor]")
+code_major, code_minor = it.fish.get("v0"), it.fish.get("v1")
+version_string = "{}.{}".format(code_major, code_minor)
+
+#assert code_major == "9.1"
+
 
 import urllib.request
 import shutil
@@ -25,10 +33,7 @@ def get_computer_name():
 
 waiting_file = "data/waiting-" + get_computer_name() + ".json"
 
-it.command("[global v0 = version.code.major]")
-it.command("[global v1 = version.code.minor]")
-code_major, code_minor = it.fish.get("v0"), it.fish.get("v1")
-version_string = "{}.{}".format(code_major, code_minor)
+
 
 
 print("importing dependencies...")
