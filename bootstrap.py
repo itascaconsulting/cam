@@ -2,14 +2,14 @@ import itasca as it
 it.command("python-reset-state false")
 
 assert it.dim() == 3, "FLAC3D is required"
-#assert it.dim() == 2, "FLAC2D 9.0 is required"
+#assert it.dim() == 2, "FLAC2D is required"
 
 it.command("[global v0 = version.code.major]")
 it.command("[global v1 = version.code.minor]")
 code_major, code_minor = it.fish.get("v0"), it.fish.get("v1")
 version_string = "{}.{}".format(code_major, code_minor)
 
-#assert code_major == "9.1"
+assert code_major == 910, "FLAC 9.1 is required"
 
 
 import urllib.request
