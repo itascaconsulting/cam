@@ -1,3 +1,8 @@
+import matplotlib; matplotlib.rcParams["savefig.directory"] = "."
+from matplotlib import pyplot as plt
+plt.rcParams.update({'font.size': 18})
+
+
 import numpy as np
 import joblib
 import glob
@@ -10,6 +15,7 @@ results = "demo/set0/done-*"
 number_of_unknowns = 5
 
 cubes = defaultdict(list)
+loads, disps = defaultdict(list), defaultdict(list)
 
 print("building result hash")
 for i, result_file in enumerate(glob.glob(results)):
@@ -19,7 +25,8 @@ for i, result_file in enumerate(glob.glob(results)):
 
     cohesion_array = data["parameters"]["cohesion_array"]
     cube_id = data["cube_id"]
-
+    loads[cube_id].append(data["result"]["load"])
+    disps[cube_id].append(data["result"]["disp"])
 
     row = cohesion_array + [end_load]
     cubes[cube_id].append(row)
@@ -28,4 +35,6 @@ for i, result_file in enumerate(glob.glob(results)):
 print("done reading")
 print(cubes.keys())
 for cube_id in cubes.keys():
-        np.save(f"result_cube_5_{cube_id}.npy", cubes[cube_id])
+    for d,l in zip(disps[cube_id], loads[cube_id]):
+        plt.plot(d,l)
+    1/0

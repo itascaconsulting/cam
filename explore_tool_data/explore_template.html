@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .line{fill:none;stroke-width:2.5px;}.flex-container{display:flex;flex-wrap:nowrap;}.tick{ font-size:1.em;stroke:#111}text{ font-size:1.em;stroke:#111}.col{ margin:0 auto 0 auto }#logo{ margin:2px 2px 2px 2px;height:75px;padding:0px 4px;border:1px solid black;}#logo img{ float:left;height:65px;padding:2px 0 2px 0;}#logo p{ color:#122142;width:100px;margin:auto auto;float:right;text-align:center;font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;font-size:20px;font-weight:bold;} #eula__div{ margin:2px 2px 2px 2px;padding:2px 4px;border:1px solid black;min-height:30px;}#documentation__overlay, #eula__overlay{ position:fixed;display:none;width:100%;height:100%;top:0;left:0;right:0;bottom:0;background-color:rgba(0,0,0,0.8);z-index:50;cursor:pointer;overflow:scroll;}#eula__text{ padding:10px 10px;border:5px solid black;margin:4px 4px;position:absolute;top:50%;left:50%;font-size:14px;color:black;background-color:white;transform:translate(-50%,-15%);-ms-transform:translate(-50%,-15%);}
+    </style>
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script> -->
+  </head>
+  <body>
+    <section id="logo">
+      <img src="iii_logo.png" alt="Itasca Consulting Logo">
+      <p>Surrogate model demo</p>
+    </section>
+
+    <div id="page_title" style="font-size:40px"> {{page_title}} </div>
+    <div class="flex-container">
+      <div id="outer_inputs">
+        <div id="inputs"></div>
+        <h2 onclick="eulaModalOn()">End-User License Agreement</h2>
+        <button onclick="eulaModalOn()">Click here for EULA</button>
+      </div>
+      <div id="res">
+        <div>
+          <div id="twodres"> </div>
+          <div id="color_bar"></div>
+        </div>
+        <div id="result"> </div>
+        <div id="dfactor"> </div>
+        <div id="color_bar_D"> </div>
+      </div>
+
+      <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/d3-simple-slider"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.3.2/math.js"></script>
+    <script type="text/javascript" src="./sliders_min.js"></script>
+    <script type="text/javascript" src="./model_min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="./run_min.js"></script>
+     <div id="eula__overlay" onclick="eulaModalOff()">
+        <div id="eula__text">
+          <p>Itasca&trade; Software License Agreement (August 15, 2014)</p>
+          <p>
+            <strong
+              >Please read the following terms and conditions of this agreement
+              carefully before using the program.</strong
+            >
+          </p>
+          <p>
+            <strong
+              >Installation of the code onto your computer indicates your
+              acceptance of the terms and conditions in this agreement.</strong
+            >
+          </p>
+          <p>
+            <strong
+              >If you do not agree with these terms and conditions, please do
+              not install the software onto your computer.</strong
+            >
+          </p>
+          <p>
+            This software program is provided by Itasca Consulting Group, Inc.
+            ("Itasca") or one of its authorized suppliers. Title to the media on
+            which the software is recorded and to the documentation in support
+            thereof is transferred to the customer, but title to the software is
+            retained by Itasca. Itasca and its licensors own all intellectual
+            property in the software. Itasca permits you to use the software
+            only in accordance with the terms of this agreement. You assume
+            responsibility for the selection of the software to achieve your
+            intended results and for the installation of the software, the use
+            of and the results obtained from the software.
+          </p>
+          <p><strong>LICENSE</strong></p>
+          <ol>
+            <li>
+              All Itasca software (with the exception of Demonstration Versions,
+              see below) are secured and require a hardware lock to cycle.
+            </li>
+            <li>
+              A standard single license allows up to two instances of the
+              software to cycle on a single computer. A Network Version (see
+              below) allows one instance of the software, per seat, to cycle on
+              any computer connected to the network.
+            </li>
+            <li>
+              You may not use, copy, modify, or transfer the software, or any
+              copy, in whole or part, except as expressly provided in this
+              document. You may not reverse engineer, decompile, or disassemble
+              the software to obtain the source code of the software.
+            </li>
+            <li>
+              You may not sell, sub-license, rent, or lease this software.
+            </li>
+            <li>
+              Licenses are not transferable outside the purchasing organization,
+              company, institution, or corporation. Licenses sold to private
+              individuals are not transferable under any terms.
+            </li>
+            <li>
+              The software may not be shared, installed, or used concurrently on
+              different computers (with the exception of Network Versions, see
+              below).
+            </li>
+          </ol>
+          <p><strong>TERMS</strong></p>
+          <p>
+            The license is effective as indicated under the purchasing terms or
+            until terminated. You may terminate it any time by destroying the
+            software together with any back-up copies and returning the hardware
+            lock. It will also terminate if you fail to comply with any term or
+            condition of this agreement. You agree upon such termination to
+            destroy the software together with any back-up copies,
+            modifications, and/or merged portions in any form and return the
+            hardware lock to Itasca.
+          </p>
+          <p><strong>WARRANTY</strong></p>
+          <p>
+            Itasca will correct any errors in the software at no charge for
+            twelve (12) months after the purchase date of the software.
+            Notification of a suspected error must be made in writing, with a
+            complete listing of the input and output files and description of
+            the error. If, in the judgment of Itasca, the software does contain
+            an error, Itasca will (at its option) correct or replace the copy at
+            no cost to the user or refund the initial purchase price of the
+            software. This warranty does not apply to demonstration versions
+            (see below).
+          </p>
+          <p><strong>LIMITATION OF LIABILITY</strong></p>
+          <p>
+            Itasca assumes no liability whatsoever with respect to any use of
+            the software or any portion thereof or with respect to any damages
+            or losses that may result from such use, including (without
+            limitation) loss of time, money or goodwill that may arise from the
+            use of the software (including any modifications or updates that may
+            follow). In no event shall Itasca be responsible for any indirect,
+            special, incidental or consequential damages arising from use of the
+            software.
+          </p>
+          <p><strong>EXPORT</strong></p>
+          <p>
+            You may not ship, transfer, or export into any country the software
+            or its updates in any manner prohibited by the United States Export
+            Administration Act or any other export laws or restrictions. In
+            addition, you represent and warrant that you are not a citizen of,
+            or located within, an embargoed nation and that you are not
+            otherwise prohibited under United States Export Laws to receive the
+            software. Rights to use the software are forfeited for failure to
+            comply with this agreement.
+          </p>
+          <p><strong>HARDWARE LOCKS</strong></p>
+          <p>
+            Title to the hardware lock(s) associated with a license belongs to
+            Itasca. You are wholly responsible to maintain and safeguard the
+            hardware lock. Itasca reserves the right to determine the cost of
+            replacing a lost or stolen hardware lock, up to and including the
+            cost of a new license.
+          </p>
+          <p><strong>UPDATES AND UPGRADES</strong></p>
+          <p>
+            If the software is an update or an upgrade to a previous version,
+            you must possess a valid license to the previous version. Any update
+            or upgrade provided for a previous version is subject to the terms
+            of this agreement. You may continue to use previous versions
+            provided that (a) it is necessary to use the previous version to
+            read or otherwise use outputs from that version of the program, (b)
+            you do not transfer the previous version to another party, and (c)
+            you acknowledge that any obligation that Itasca has to support the
+            previous version of the program may end upon obtaining the update or
+            upgrade.
+          </p>
+          <p><strong>NETWORK VERSIONS</strong></p>
+          <p>
+            If and only if the license is a network version, the terms of this
+            agreement apply in all respects with the following exception: the
+            software may be used concurrently on the number of machines for
+            which the program has been licensed and as allowable by the
+            program's hardware lock.
+          </p>
+          <p><strong>DEMONSTRATION VERSIONS</strong></p>
+          <p>
+            If and only if the software is used in demonstration mode, the terms
+            of this agreement apply in all respects with the following
+            exceptions. The software is provided "AS-IS" and Itasca bears no
+            responsibility to provide support for the software. The software
+            shall be operable without a hardware lock. You acknowledge that the
+            software may contain bugs, errors or other problems for which Itasca
+            disclaims any warranty or liability obligations.
+          </p>
+          <p><strong>ANNUAL MAINTENANCE</strong></p>
+          <p>
+            Some Itasca software are licensed under an Annual Maintenance Plan.
+            The Annual Maintenance Plan includes support (as defined below under
+            Software Support), service updates and full-version upgrades. Such
+            support, updates and upgrades are only available while enrolled in
+            the Maintenance Plan.
+          </p>
+          <p><strong>SOFTWARE SUPPORT</strong></p>
+          <p>
+            For software products that are not licensed under an Annual
+            Maintenance Plan, Itasca will provide support for the current
+            release version as well as for the version immediately preceding the
+            current version for 12 months after release of the current version.
+          </p>
+          <p>
+            Software support includes providing email and telephone support, at
+            no charge, to assist the software owner in the installation of the
+            software on the owner's computer system. Additionally, general
+            assistance may be provided in aiding the owner in understanding the
+            capabilities of the various features of the software. However,
+            no-cost assistance is not provided for help in applying Itasca
+            Software to specific user-defined problems.
+          </p>
+          <p>
+            Technical support covering modeling questions, applications,
+            definitions, interpretation of results, design guidelines, etc., can
+            be provided through the Premium Service Plan (for PFC users) or
+            purchased on an as-needed basis. For users who envisage the need for
+            substantial amounts of assistance, consulting support is available.
+            In all instances, the user is encouraged to send the problem
+            description to Itasca by fax or electronic mail in order to minimize
+            the amount of time spent trying to define the problem.
+          </p>
+          <p>
+            Itasca reserves the right to determine what qualifies as no-cost
+            assistance and what requires payment.
+          </p>
+          <p><strong>THIRD PARTY ACKNOWLEDGEMENTS AND TERMS</strong></p>
+          <p>
+            The Itasca software may contain or be accompanied by third-party
+            software, data, libraries or other materials that are subject to and
+            provided in accordance with terms that are in addition to or
+            different from the terms set forth in this Agreement. Such terms may
+            be included or referenced in or with such third-party software.
+            Licensee agrees to comply with such terms. In addition, Licensee
+            will take sole responsibility for obtaining and complying with any
+            licenses that may be necessary to use third-party software, data or
+            other materials that Licensee uses or obtains for use in conjunction
+            with Itasca software. Licensee acknowledges and agrees that Itasca
+            has no responsibility for, and makes no representations or
+            warranties regarding, such third-party software, data or other
+            materials or Licensee's use of such third-party software, data or
+            other materials.
+          </p>
+          <p>
+            Itasca reserves the right, at its discretion, to change, modify, add
+            or remove portions of this EULA by posting the updates to it on the
+            Itasca website. You will be deemed to have accepted such changes by
+            continuing to use the Itasca software.
+          </p>
+          <br />
+          <button>Click here to close EULA</button>
+        </div>
+      </div>
+    </div>
+
+  </body>
+  <script>
+    function eulaModalOn() {
+      document.getElementById("eula__overlay").style.display="block";
+    }
+    function eulaModalOff(){
+      document.getElementById("eula__overlay").style.display="none";
+    }
+  </script>
+</html>

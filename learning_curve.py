@@ -15,6 +15,7 @@ start_time = time.time()
 def train_and_test(X_train, y_train, X_test, y_test):
     lsize = len(X_train[0])
     sizes = (lsize, lsize, lsize)
+    print(sizes)
 
     scaler = skl.preprocessing.StandardScaler()
     scaler.fit(X_train)
@@ -62,13 +63,20 @@ test_score, validation_score = [], []
 
 sizes = []
 cube_size = []
-for filename in [f"result_cube_5_{_}.npy" for _ in lhc_sizes]:
+for size, filename in zip(lhc_sizes,[f"result_cube_5_{_}.npy" for _ in lhc_sizes]):
     if not os.path.exists(filename):
         continue
     print(f"training {filename}")
     XY = np.load(filename)
+
+    Y = XY[:, -1]
+    if len(Y) < 0.95 * 2**size:
+        print("skipping partial cube", size, 2**size, len(Y))
+        #continue
+
     sizes.append(len(XY)+sum(cube_size))
     cube_size.append(len(XY))
+
 
     Y = XY[:, -1]
     X = XY[:, :-1]
