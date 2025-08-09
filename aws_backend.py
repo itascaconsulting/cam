@@ -31,7 +31,7 @@ def put_text_on_s3(data, object_name):
     s3.upload_fileobj(data, DataBucketName, object_name)
 
 def put_JSON_on_s3(data, object_name):
-    put_text_on_s3(BytesIO(json.dumps(data).encode()), object_name)
+    put_text_on_s3(BytesIO(json.dumps(data, indent=2).encode()), object_name)
 
 def get_text_from_s3(object_name):
     with BytesIO() as f:
@@ -49,5 +49,14 @@ def get_message():
     if len(messages)==1:
         message = messages[0]
         return message
+    else:
+        return None
+
+def get_messages(n):
+    messages = queue.receive_messages(MaxNumberOfMessages=n,
+                                      VisibilityTimeout=10,
+                                      WaitTimeSeconds=0)
+    if len(messages)>0:
+        return messages
     else:
         return None

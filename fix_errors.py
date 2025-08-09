@@ -40,19 +40,6 @@ def get_matching_s3_keys(bucket, prefix='', suffix=''):
         except KeyError:
             break
 
-def resend_case(base_file, parameter_file, case_id):
-    new_data = {"base_file": base_file,
-                "parameter_file": parameter_file,
-                "case_id": case_id
-    }
-    body = json.dumps(new_data)
-    mid = hashlib.sha256(body.encode()).hexdigest()
-    reply = queue.send_message(MessageBody=body,
-                               MessageDeduplicationId=mid,
-                               MessageGroupId="main")
-    message_id = reply.get('MessageId')
-    s3.delete_object(Bucket=DataBucketName, Key=key)
-    print(message_id)
 
 
 # list pending and error
@@ -61,7 +48,7 @@ for key in get_matching_s3_keys(DataBucketName, "data/error"):
     del data["exception"]
     del data["traceback"]
     print("re-sending", key, data["parameter_file"])
-    resend_case(data["base_file"], data["parameter_file"], data["case_id"])
+
 
 for key in get_matching_s3_keys(DataBucketName, "data/pending"):
     try:
@@ -70,7 +57,7 @@ for key in get_matching_s3_keys(DataBucketName, "data/pending"):
         time_delta_hours = (datetime.datetime.now()-date).total_seconds()/60/60.0
         if time_delta_hours > 1:
             print("re-sending ({} hours old)".format(int(time_delta_hours)), key, data["parameter_file"])
-            resend_case(data["base_file"], data["parameter_file"], data["case_id"])
+
     except botocore.exceptions.ClientError as error:
         pass
 

@@ -31,16 +31,6 @@ def train_and_test(X_train, y_train, X_test, y_test):
         max_iter=4*1600,
         random_state=1
 
-        # solver='sgd',
-        # learning_rate='adaptive',
-        # learning_rate_init=0.1,
-        # momentum=0.90,
-        # max_iter=10 * 160,
-        # tol=2.5e-5,
-        # n_iter_no_change=10,
-        # random_state=2,
-        # shuffle=True,
-        # verbose=False
     )
 
     mlpr.fit(X_train_scaled, y_train)

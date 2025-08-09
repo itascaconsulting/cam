@@ -19,7 +19,7 @@ def put_JSON_on_s3(data, object_name):
     s3.upload_fileobj(BytesIO(json.dumps(data).encode()), DataBucketName, object_name)
 
 
-prefixes = ["demo", "set0"]  # any number of folders is OK except zero
+prefixes = ["demo", "set1"]  # any number of folders is OK except zero
 assert prefixes
 prefix = "/".join(prefixes)
 

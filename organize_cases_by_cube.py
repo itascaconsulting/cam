@@ -6,7 +6,7 @@ import os.path
 from collections import defaultdict
 
 
-results = "demo/set0/done-*"
+results = "demo/set1/done-*"
 number_of_unknowns = 5
 
 cubes = defaultdict(list)
